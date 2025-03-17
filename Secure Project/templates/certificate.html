@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Certificate Template</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .certificate-content {
+            text-align: center;
+            padding: 30px;
+            flex-grow: 1;
+            border: 2px solid #000;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .logos {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-heading {
+            font-size: 3rem;
+            font-weight: 600;
+        }
+
+        .sub-heading {
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        /* .verified-date-placeholder {
+            width: 150px;
+            height: 30px;
+            border: 1px dashed #000;
+            text-align: center;
+            line-height: 30px;
+            background-color: #e9e9e9;
+            font-weight: bold;
+            border-radius: 5px;
+        } */
+
+        .statement {
+            margin-top: 20px;
+            font-size: 1.1em;
+            line-height: 1.5;
+            text-align: left;
+            margin-left: 40px;
+            margin-right: 40px;
+        }
+
+        .statement p {
+            text-align: justify;
+        }
+
+        .para {
+            font-size: 1.5rem;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .signature-placeholder,
+        .verified-date-placeholder {
+            width: 200px;
+            height: 50px;
+            border: 1px dashed #000;
+            text-align: center;
+            line-height: 50px;
+            background-color: #f9f9f9;
+        }
+
+        .qr-placeholder {
+            width: 100px;
+            height: 100px;
+            border: 1px dashed #000;
+            text-align: center;
+            line-height: 100px;
+            background-color: #f9f9f9;
+        }
+
+        .date-right {
+            text-align: right;
+            margin: 30px 50px 50px;
+            font-size: 1.5em;
+        }
+
+        #qr-code>canvas {
+            width: 98px !important;
+            height: 99px !important;
+        }
+
+        .generated-date {
+            font-size: 2rem;
+            text-decoration: none;
+            border-bottom: 2px solid black;
+        }
+    </style>
+</head>
+
+<body class="bg-light font-sans">
+    <header class="bg-primary text-white shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center py-3">
+            <a href="{{ url_for('dashboard_admin') }}" class="btn btn-warning btn-sm font-weight-bold me-2">Back</a>
+            <h1 class="h4 font-weight-bold">Certificate Generation & Validation</h1>
+            <a href="{{ url_for('home') }}" class="btn btn-danger btn-sm font-weight-bold">Log Out</a>
+        </div>
+    </header>
+    <main class="container my-5">
+        <div id="alert-container" class="mt-3 text-center font-weight-bold"></div>
+        <div class="card-header bg-light d-flex justify-content-end align-items-center">
+            <button id="downloadPdf" class="btn btn-lg btn-success">Download Certificate</button>
+        </div>
+        <div class="certificate-content" id="certificate">
+            <div class="logos">
+                <img src="../static/gok.png" alt="Logo Left" style="width: 200px;">
+                <h1 class="main-heading">Certificate of Achievement</h1>
+                <img src="../static/vtu.png" alt="Logo Right" style="width: 200px;">
+            </div>
+
+            <p class="date-right">Date: <u class="generated-date">{{ date }}</u></p>
+
+            <div class="statement">
+                <h3 class="text-center sub-heading"><u>TO WHOMSOVER IT MAY CONCERN</u></h3>
+                <p class="para">This is to certify that <span class="highlight">{{ name }}</span> has successfully
+                    completed
+                    the <span class="highlight">{{ course_name }}</span> program with the course ID <span
+                        class="highlight">{{ course_id }}</span>. The student has shown exceptional skill and dedication
+                    throughout the duration of the course, demonstrating a deep understanding of the material and
+                    achieving
+                    outstanding results.</p>
+                <p class="para">The course was conducted from <span class="highlight">{{ start_date }}</span> to <span
+                        class="highlight">{{ end_date }}</span> at <span class="highlight">{{ institution_name }}, {{
+                        institution_city }}</span>. In the duration of the course, the student has acquired valuable
+                    knowledge and skills that will contribute to their future success. This achievement is a testament
+                    to
+                    their hard work and perseverance.</p>
+            </div>
+            <div class="footer">
+                <div class="signature-placeholder">Signature</div>
+                <div class="verified-date-placeholder">Verified Date</div>
+                <div class="qr-placeholder" id="qr-code"></div>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">&copy; 2025 Certificate System. All rights reserved.</p>
+    </footer>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        document.getElementById('downloadPdf').addEventListener('click', async function () {
+            const {
+                jsPDF
+            } = window.jspdf;
+
+            // Initialize jsPDF with Landscape orientation
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px', // Use pixel units for easier calculations
+                format: [794, 1123] // A4 landscape size in pixels (height x width)
+            });
+
+            // Define margins
+            const margin = 10; // 10px margin on all sides
+
+            // Get the certificate content
+            const certificateElement = document.getElementById('certificate');
+
+            // Render the certificate content to a canvas using html2canvas
+            try {
+                const canvas = await html2canvas(certificateElement, {
+                    scale: 2, // Higher scale improves quality
+                    useCORS: true // Handle cross-origin issues for images
+                });
+
+                // Get the canvas as an image
+                const imgData = canvas.toDataURL('image/png');
+
+                // Calculate the image dimensions for fitting A4 landscape
+                const pageWidth = 1123 - 2 * margin; // Width after subtracting left and right margins
+                const pageHeight = 794 - 2 * margin; // Height after subtracting top and bottom margins
+                const imgWidth = pageWidth; // Fit the width to the page width
+                const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+
+                // Calculate the vertical offset to center the content vertically
+                const offsetY = (pageHeight - imgHeight) / 2;
+
+                // Add the image to the PDF with margins and vertical centering
+                pdf.addImage(imgData, 'PNG', margin, margin + offsetY, imgWidth, imgHeight);
+
+                // Construct the file name dynamically
+                const fileName = "{{ name }}_certificate.pdf";
+
+                // Save the PDF
+                pdf.save(fileName);
+            } catch (error) {
+                console.error("Error generating PDF:", error);
+                alert("Failed to generate PDF. Please check the console for details.");
+            }
+        });
+    </script> -->
+    <script>
+        // document.getElementById('downloadPdf').addEventListener('click', async function () {
+        //     // Get the certificate content
+        //     const certificateElement = document.getElementById('certificate');
+
+        //     // Render the certificate content to a canvas using html2canvas
+        //     try {
+        //         const canvas = await html2canvas(certificateElement, {
+        //             scale: 2, // Higher scale improves quality
+        //             useCORS: true // Handle cross-origin issues for images
+        //         });
+
+        //         // Convert the canvas to a PNG image
+        //         const imgData = canvas.toDataURL('image/png');
+
+        //         // Create a link element for downloading the image
+        //         const link = document.createElement('a');
+        //         const fileName = "{{ name }}_certificate.png"; // Dynamic file name
+
+        //         // Set link attributes for downloading
+        //         link.href = imgData;
+        //         link.download = fileName;
+
+        //         // Trigger the download
+        //         link.click();
+        //     } catch (error) {
+        //         console.error("Error generating PNG:", error);
+        //         alert("Failed to generate PNG. Please check the console for details.");
+        //     }
+        // });
+        document.getElementById('downloadPdf').addEventListener('click', async function () {
+            const certificateElement = document.getElementById('certificate');
+
+            try {
+                const canvas = await html2canvas(certificateElement, {
+                    scale: 2,
+                    useCORS: true,
+                });
+
+                // Convert canvas to PNG image data
+                const imgData = canvas.toDataURL('image/png');
+
+                // Extract only the Base64 part of the image data
+                const base64Image = imgData.split(',')[1];
+
+                // Prepare the payload for the server
+                const payload = {
+                    image: base64Image,
+                    file_name: "{{ name }}_certificate.png", // Dynamic file name
+                };
+
+                // Send the image to the server for storage
+                const response = await fetch('/save_certificate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const alertContainer = document.getElementById('alert-container'); // Bootstrap alert container
+
+                if (response.ok) {
+                    // Display success Bootstrap alert
+                    alertContainer.innerHTML = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Certificate saved successfully.
+                    </div>
+                `;
+                } else {
+                    throw new Error('Server error: Unable to save certificate.');
+                }
+            } catch (error) {
+                console.error("Error generating PNG:", error);
+
+                const alertContainer = document.getElementById('alert-container'); // Bootstrap alert container
+
+                // Display error Bootstrap alert
+                alertContainer.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    Failed to save PNG. Please check the console for details.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            }
+
+            // Automatically dismiss alerts after 5 seconds
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert'); // Get all alerts
+
+                alerts.forEach((alert) => {
+                    if (alert.classList.contains('show')) {
+                        alert.classList.remove('show');
+                        alert.classList.add('fade');
+                        alert.classList.add('d-none');
+                    }
+                });
+            }, 5000); // 5000ms = 5 seconds
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script>
+        const qrData = "{{ qr_data | e }}";  // Escaping for special characters
+        const qrPlaceholder = document.getElementById('qr-code');
+
+        if (qrData) {
+            // Create a canvas element inside the qrPlaceholder div
+            const canvas = document.createElement('canvas');
+            qrPlaceholder.appendChild(canvas);
+
+            QRCode.toCanvas(canvas, qrData, function (error) {
+                if (error) {
+                    console.error('QR Code generation error:', error);
+                } else {
+                    console.log('QR Code generated successfully.');
+                }
+            });
+        } else {
+            console.error('QR data is empty or invalid.');
+        }
+
+        console.log('QR Data:', qrData);
+    </script>
+</body>
+
+</html>
