@@ -1,7 +1,5 @@
 # Secure Access Control & Validation of Certificate using Blockchain and Python
 
-
-Secure Access Control & Validation of Certificate using Blockchain and Python
 Overview
 This project implements a secure access control and certificate validation system using Blockchain and Python. The system ensures tamper-proof certificate issuance, validation, and verification while providing secure access to authorized users.
 
@@ -19,22 +17,26 @@ Smart Contracts: Solidity (if using Ethereum)
 Installation
 Clone the repository:
 bash
-Copy code
+Copy
+Edit
 git clone https://github.com/your-repo/secure-cert-validation.git
 cd secure-cert-validation
 Install dependencies:
 bash
-Copy code
+Copy
+Edit
 pip install -r requirements.txt
 Set up the database:
 sql
-Copy code
+Copy
+Edit
 CREATE DATABASE cert_validation;
 Configure .env file with database and blockchain details.
 Usage
 Start the backend server:
 bash
-Copy code
+Copy
+Edit
 python app.py
 Access the web interface:
 Open http://localhost:5000 in a browser.
@@ -51,9 +53,3 @@ Integration with Decentralized Identity (DID).
 AI-powered fraud detection for certificates.
 License
 This project is licensed under the MIT License.
-
-Contributing
-Contributions are welcome! Please fork the repository and submit a pull request.
-
-License
-This project is licensed under the GPL-3.0 License.
