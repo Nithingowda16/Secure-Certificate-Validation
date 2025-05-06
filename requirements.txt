@@ -1,0 +1,7 @@
+Flask
+Flask-Mail
+opencv-python
+numpy
+pyzbar
+reportlab
+pillow
