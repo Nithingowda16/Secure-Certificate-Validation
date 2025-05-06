@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Register</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Add Poppins Google Font -->
+     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://wallpaperaccess.com/full/1267611.jpg');
+            background-color: #c9d6ff;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* background: linear-gradient(135deg, #532a2a, #173656); */
+        }
+
+        .form-container {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: none; /* <-- remove white border */
+            color: #ffffff;
+            border-radius: 20px;
+            box-shadow: none;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            width: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: none;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #000000, #000000);
+            color: hsl(0, 0%, 100%);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 15px 15px 0 0 !important;
+            font-size: 1.25rem;
+        }
+
+        .btn-custom {
+            background-color: #000000;
+            border: none;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 20px;
+            padding: 12px 50px;
+            transition: background 0.3s, transform 0.2s;
+            }
+
+        .btn-custom:hover {
+            background-color: #000000;
+            transform: scale(1.05);
+        }
+
+
+        a {
+            color: #00e676;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .shadow-lg {
+            box-shadow: none;
+        }
+
+        .form-switch {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-role {
+            background: #ffffff;
+            border: 2px solid transparent;
+            color: #000000;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 0 15px;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .btn-role:hover {
+            transform: scale(1.1);
+            box-shadow: none;
+        }
+
+        .btn-role.selected {
+            background: #000000;
+            color: #fff;
+            border: 2px solid  #000000;
+            transform: scale(1.2);
+            box-shadow: none;
+        }
+
+        .login-heading {
+            font-size: 36px;
+            /* Adjust font size as needed */
+            font-weight: bold;
+            /* Optional: make it bold */
+            color: #ffffff;
+            /* Set text color */
+            text-shadow: none;
+            /* Horizontal, Vertical, Blur Radius, Color */
+        }
+
+            .form-control {
+               background-color: #f0f0f0 !important;
+               border: none !important;
+               border-radius: 20px;
+               color: #333 !important;
+               font-size: 14px;
+               padding: 25px; /* Increased padding for better visibility */
+               width: 100%; /* Ensures it takes full available width */
+        }
+            .form-control::placeholder {
+                 color: #888;
+        }
+    </style>
+<body>
+    <div style="position: absolute; top: 20px; left: 20px;">
+        <img src = "" alt="Certificate Icon" style="width: 180px; height: 180px;">
+    </div>
+    
+    <h2 class="mb-5 login-heading">CERTIFICATE GENERATION AND VALIDATION</h2>
+    <div class="container d-flex justify-content-center">
+        <div class="form-container">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="alert alert-{{ messages[0][0] }}" role="alert">
+                {{ messages[0][1] }}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Login Type Selection -->
+            <div class="form-switch mb-3">
+                <button class="btn btn-role" id="admin-login-btn">ADMIN</button>
+                <button class="btn btn-role selected" id="user-login-btn">USER</button>
+            </div>
+
+            <!-- Card for Login Form -->
+            <div class="card text-center shadow-lg" id="login-form">
+                <div class="card-header">
+                    <h3><span id="role-message">LOGIN AS USER</span></h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="form-group">
+                            <label for="loginUsername"></label>
+                            <input type="text" class="form-control" id="loginUsername" name="username" value="{{ username if username else '' }}" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword"></label>
+                            <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Enter your password"required>
+                        </div>
+                        <input type="hidden" id="login-role" name="role" value="{{ role if role else 'user' }}">
+                        <br>
+                        <button type="submit" class="btn btn-custom w-50">LOGIN</button>
+                    </form>                    
+                </div>
+                <div class="card-footer text-center">
+                    <button class="btn btn-link" id="toggle-to-register" style="color: black;">Don't have an account? Register</button>
+                </div>
+            </div>
+
+            <!-- Card for Register Form -->
+            <div class="card text-center shadow-lg" id="register-form" style="display: none;">
+                <div class="card-header">
+                    <h3 id="register-role-message">REGISTER AS USER</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <div class="form-group">
+                            <label for="registerUsername"></label>
+                            <input type="text" class="form-control" id="registerUsername" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword"></label>
+                            <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <input type="hidden" id="register-role" name="role" value="user">
+                        <button type="submit" class="btn btn-custom w-50">REGISTER</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                <center><button class="btn btn-link" id="toggle-to-login" style="color: black;">Already have an account? Login</button></center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between login and register forms
+        document.getElementById('toggle-to-register').addEventListener('click', function () {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+            document.getElementById('toggle-to-register').style.display = 'none';
+            document.getElementById('toggle-to-login').style.display = 'block';
+            updateRoleMessage();
+        });
+
+        document.getElementById('toggle-to-login').addEventListener('click', function () {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('toggle-to-register').style.display = 'block';
+            document.getElementById('toggle-to-login').style.display = 'none';
+            updateRoleMessage();
+        });
+
+        // Store selected role and toggle between login types
+        let selectedRole = 'user'; // Default role
+
+        // Update role message for both login and register
+        function updateRoleMessage() {
+            const action = document.getElementById('register-form').style.display === 'none' ? 'Login' : 'Register';
+            const message = `${action} as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`;
+            document.getElementById('role-message').textContent = message;
+
+            // Update register form heading based on selected role
+            const registerMessage = ` Register as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`;
+            document.getElementById('register-role-message').textContent = registerMessage;
+        }
+
+        document.getElementById('admin-login-btn').addEventListener('click', function () {
+            selectedRole = 'admin';
+            document.getElementById('login-role').value = 'admin';
+            document.getElementById('register-role').value = 'admin';
+
+            document.getElementById('admin-login-btn').classList.add('selected');
+            document.getElementById('user-login-btn').classList.remove('selected');
+            updateRoleMessage();
+        });
+
+        document.getElementById('user-login-btn').addEventListener('click', function () {
+            selectedRole = 'user';
+            document.getElementById('login-role').value = 'user';
+            document.getElementById('register-role').value = 'user';
+
+            document.getElementById('user-login-btn').classList.add('selected');
+            document.getElementById('admin-login-btn').classList.remove('selected');
+            updateRoleMessage();
+        });
+
+        // Initial update of the role message
+        updateRoleMessage();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const alertMessage = document.querySelector('.alert');
+
+                if (alertMessage) {
+                    alertMessage.classList.remove('show');
+                    alertMessage.classList.add('fade');
+                    alertMessage.classList.add('d-none');
+                }
+            }, 5000); // 5000ms = 5 seconds
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

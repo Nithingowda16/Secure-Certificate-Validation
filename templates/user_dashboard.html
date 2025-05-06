@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+ /* Apply 'Poppins' font globally */
+ body {
+            font-family: 'Poppins', sans-serif;
+        }
+    
+        /* Custom class for card with bottom rounded corners */
+        .card {
+            border-radius: 0 0 20px 20px !important; /* Rounded corners only at the bottom */
+        }
+    
+        .card-header {
+            background-color: #000 !important; /* Black background */
+            color: #fff !important; /* White text */
+            border-top-left-radius: 0; /* No rounding at the top left */
+            border-top-right-radius: 0; /* No rounding at the top right */
+        }
+        .card-header {
+            background-color: #000 !important; /* Black background */
+            color: #fff !important; /* White text */
+            border-top-left-radius: 0; /* No rounding at the top left */
+            border-top-right-radius: 0; /* No rounding at the top right */
+        }
+    
+        /* Custom styling for input fields */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"] {
+            border: none; /* Remove border */
+            border-radius: 12px;
+            padding: 10px;
+            font-family: 'Poppins', sans-serif;
+            width: 90%; /* Adjust width to your desired size */
+            max-width: 400px; /* Optional: Set a maximum width */
+            height: 50px; /* Adjust height of input fields */
+            background-color: #f0f0f0; /* Change the background color of input fields */
+            transition: all 0.3s ease;
+        }
+    
+        /* Make the labels (headings) bold */
+label {
+    font-weight: bold; /* Bold text for the labels */
+}
+
+        /* Custom class for submit button */
+        .custom-submit-btn {
+            background-color: black !important;
+            border-color: black !important;
+            color: white !important;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 15px !important;
+            padding: 10px 20px;
+        }
+    
+        /* Change header background to black */
+        .bg-primary {
+            background-color: #000 !important; /* Black background */
+        }
+    
+        /* Change header text to white */
+        .text-white {
+            color: #fff !important; /* White text */
+        }
+    
+        /* Style for the Log Out button */
+        .btn-danger {
+            background-color: #000 !important; /* Black background */
+            color: #fff !important; /* White text */
+            border-radius: 25px !important; /* Rounded corners */
+            padding: 10px 20px !important; /* Adjust padding for button size */
+            border: none !important; /* Remove border */
+        }
+    
+        /* Hover effect for Log Out button */
+        .btn-danger:hover {
+            background-color: #333 !important; /* Darker black on hover */
+        }
+        /* Make file input box curvy */
+  .form-control-file {
+    border: 1px solid #ced4da;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  /* Style the Request OTP button */
+  .btn-custom-black {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-radius: 12px;
+    border: none;
+  }
+  .verify-btn {
+    font-family: 'Poppins', sans-serif !important;
+    background-color: #000 !important;
+    color: #fff !important;
+    border-radius: 12px !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    transition: background-color 0.3s ease;
+  }
+
+  .verify-btn:hover,
+  .verify-btn:focus {
+    background-color: #222 !important;
+    color: #fff !important;
+  }
+</style>
+
+        </style>
+</head>
+
+<body class="bg-light font-sans">
+    <header class="bg-primary text-white shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center py-3">
+            <h1 class="h4 font-weight-bold">Certificate Generation & Validation</h1>
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <!-- <a href="{{ url_for('home') }}" class="nav-link text-white">Home</a> -->
+                        <a href="#" class="nav-link text-white"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard_user') }}" class="nav-link text-white"></a>
+                    </li>
+                </ul>
+            </nav>
+            <a href="{{ url_for('home') }}" class="btn btn-danger btn-sm font-weight-bold">Log Out</a>
+        </div>
+    </header>    
+    <main class="container my-5">
+        <h2 class="text-center mb-4 display-5">
+            Welcome, <span class="text-primary">{{ username }}!</span> Please verify your details.
+        </h2>        
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert alert-info mt-4 text-center font-weight-bold">
+            <ul class="mb-0" type="none">
+                {% for category, message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- User Details Form -->
+        <div class="card mt-3 shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Verify Certificate</h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="/verify_certificate" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control shadow-sm" id="name" name="name"
+                                placeholder="Enter your name" value="{{ user_data.get('name', '') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email ID</label>
+                            <input type="email" class="form-control shadow-sm" id="email" name="email"
+                                placeholder="Enter your email" value="{{ user_data.get('email', '') }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control shadow-sm" id="phone" name="phone"
+                                placeholder="Enter your phone number" value="{{ user_data.get('phone', '') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="course_name" class="form-label">Course Name</label>
+                            <input type="text" class="form-control shadow-sm" id="course_name" name="course_name"
+                                placeholder="Enter course name" value="{{ user_data.get('course_name', '') }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="course_id" class="form-label">Course ID</label>
+                            <input type="text" class="form-control shadow-sm" id="course_id" name="course_id"
+                                placeholder="Enter course ID" value="{{ user_data.get('course_id', '') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="institution_name" class="form-label">Institute Name</label>
+                            <input type="text" class="form-control shadow-sm" id="institution_name" name="institution_name"
+                                placeholder="Enter institute name" value="{{ user_data.get('institution_name', '') }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="institution_city" class="form-label">Institution City</label>
+                            <input type="text" class="form-control shadow-sm" id="institution_city" name="institution_city"
+                                placeholder="Enter institution city" value="{{ user_data.get('institution_city', '') }}" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="start_date" class="form-label">Course Start Date</label>
+                            <input type="date" class="form-control shadow-sm" id="start_date" name="start_date"
+                                value="{{ user_data.get('start_date', '') }}" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="end_date" class="form-label">Course Completion Date</label>
+                            <input type="date" class="form-control shadow-sm" id="end_date" name="end_date"
+                                value="{{ user_data.get('end_date', '') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="certificate_image" class="form-label">Upload Certificate</label>
+                            <input type="file" class="form-control-file" id="certificate_image" name="certificate_image" required>
+                            <br>
+                          <button type="submit" class="btn btn-lg shadow-sm btn-custom-black">Request OTP</button>
+                          <br>
+                        </div>
+                        </form>                
+            </div>
+        </div>
+
+        <!-- OTP Modal -->
+        <div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/verify_otp">
+                            <div class="form-group">
+                                <label for="otp" class="form-label">OTP</label>
+                                <input type="text" class="form-control shadow-sm" id="otp" name="otp"
+                                    placeholder="Enter OTP" required>
+                            </div>
+                            <button type="submit" class="btn btn-lg shadow-sm verify-btn">Verify OTP</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">&copy; 2025 Certificate System. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Trigger modal if OTP is sent -->
+    {% if otp_sent %}
+    <script>
+        $(document).ready(function () {
+            $('#otpModal').modal('show');
+        });
+    </script>
+    {% endif %}
+    <script>
+        // Automatically dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const alertMessage = document.querySelector('.alert-info');
+
+                if (alertMessage) {
+                    alertMessage.classList.remove('show');
+                    alertMessage.classList.add('fade');
+                    alertMessage.classList.add('d-none');
+                }
+            }, 5000); // 5000ms = 5 seconds
+        });
+    </script>
+</body>
+
+</html>
